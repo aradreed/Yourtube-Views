@@ -6,10 +6,14 @@
 
 # Requires mechanize gem. If it won't load, download it
 begin
-  require 'mechanize'
-rescue Gem::LoadError
-  System('gem install mechanize')
+  gem 'mechanize'
+rescue LoadError
+  puts "Installing mechanize gem..."
+  system('gem install mechanize')
+  Gem.clear_paths
 end 
+
+require 'mechanize'
 
 # Important variables
 ## HTML elements
