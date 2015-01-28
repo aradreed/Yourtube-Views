@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 # Yourtube Views v.001
 # Arad Reed
 
@@ -25,41 +27,25 @@ titles = []
 views = []
 upload_dates = []
 
-if (ARGV[0])
-  username = ARGV[0]
-else
-  puts "Please pass in a username to grab the videos from."
-  puts "Ex. yourtubeViews.rb myUsername"
-  exit
-end
+username = ARGV[0] or abort 'Please pass in a username to grab the videos'
 
-mech = Mechanize.new
+mech = Mechanize.new{|a| a.ssl_version, a.verify_mode = 'SSLv3', OpenSSL::SSL::VERIFY_NONE}
 
 # The user's Youtube videos page
 page = mech.get("https://www.youtube.com/user/#{username}/videos")
 
 # Grab the video titles
-page.search(title_element).each do |title|
-  titles.push(title.text)
-end
+titles = page.search(title_element).map(&:text)
 
 # Grab the views for said titles
-page.search(view_element).each do |info|
-  info = info.text
-  
-  if (info.include?("views"))
-    views.push(info)
-  else
-   upload_dates.push(info)
- end
-end
+views, upload_dates = *page.search(view_element).map(&:text).partition { |info| info.include? 'views' }
 
 # Headings
-printf("%-50s|%-20s|%-15s|\n", "Video", "Views", "Upload Date")
-88.times {print "-"}
+printf("%-50s|%-15s|%-10s|\n", "Video", "Views", "Upload Date")
+78.times {print "-"}
 puts 
 
 # Print out the information
 titles.each_with_index do |title,index|
-  printf("%-50s|%-20s|%-15s|\n", title, views[index], upload_dates[index])
+  printf("%-50s|%-15s|%-10s|\n", title, views[index], upload_dates[index])
 end 
