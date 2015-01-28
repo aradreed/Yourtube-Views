@@ -46,11 +46,15 @@ titles = page.search(title_element).map(&:text)
 views, upload_dates = *page.search(view_element).map(&:text).partition { |info| info.include? 'views' }
 
 # Headings
-printf("%-50s|%-15s|%-10s|\n", "Video", "Views", "Upload Date")
+printf("%-50s|%-15s|%-10s\n", "Video", "Views", "Upload Date")
 78.times {print "-"}
 puts 
 
 # Print out the information
 titles.each_with_index do |title,index|
-  printf("%-50s|%-15s|%-10s|\n", title, views[index], upload_dates[index])
+  if (title.length > 40)
+    title = "#{title[0, 40]} (...)" 
+  end
+  
+  printf("%-50s|%-15s|%-10s\n", title, views[index], upload_dates[index])
 end 
