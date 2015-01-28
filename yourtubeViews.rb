@@ -32,7 +32,12 @@ username = ARGV[0] or abort 'Please pass in a username to grab the videos'
 mech = Mechanize.new{|a| a.ssl_version, a.verify_mode = 'SSLv3', OpenSSL::SSL::VERIFY_NONE}
 
 # The user's Youtube videos page
-page = mech.get("https://www.youtube.com/user/#{username}/videos")
+begin
+  page = mech.get("https://www.youtube.com/user/#{username}/videos")
+rescue Mechanize::ResponseCodeError
+  puts "The YouTube page didn't respond. Username may not exist."
+  exit
+end
 
 # Grab the video titles
 titles = page.search(title_element).map(&:text)
