@@ -58,3 +58,6 @@ titles.each_with_index do |title,index|
   
   printf("%-50s|%-15s|%-10s\n", title, views[index], upload_dates[index])
 end 
+
+puts "\nPress enter to close..."
+STDIN.gets
